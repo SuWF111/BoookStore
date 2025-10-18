@@ -20,7 +20,7 @@ def user_loader(userid):
     data = Member.get_role(userid)
     try:
         user.role = data[0]
-        user.name = data[1]
+        user.name = data[1]+data[2]
     except:
         pass
     return user
@@ -73,7 +73,8 @@ def register():
             return redirect(url_for('api.register'))
         else:
             input = { 
-                'name': request.form['username'], 
+                'lname': request.form['userlname'], 
+                'fname': request.form['userfname'], 
                 'account':user_account, 
                 'password':request.form['password'], 
                 'identity':request.form['identity'] 

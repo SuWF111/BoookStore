@@ -154,11 +154,16 @@ def orderManager():
         order_row = Order_List.get_order()
         order_data = []
         for i in order_row:
+            full_name = ""
+            if not i[1]: 
+                full_name = i[2]  # 如果姓是空的，直接使用名字(這時是全名)
+            else:
+                full_name = f"{i[1]}{i[2]}" # 否則，正常組合
             order = {
                 '訂單編號': i[0],
-                '訂購人': i[1],
-                '訂單總價': i[2],
-                '訂單時間': i[3]
+                '訂購人': full_name,
+                '訂單總價': i[3],
+                '訂單時間': i[4]
             }
             order_data.append(order)
             
