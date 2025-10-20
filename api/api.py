@@ -20,7 +20,10 @@ def user_loader(userid):
     data = Member.get_role(userid)
     try:
         user.role = data[0]
-        user.name = data[1]+data[2]
+        if not data[1]:
+            user.name = data[2]
+        else:
+            user.name = data[1]+data[2]
     except:
         pass
     return user
