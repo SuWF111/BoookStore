@@ -1,21 +1,31 @@
 {% extends "base.html" %}
 {% block head %}
 {{ super() }}
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital@1&family=Oswald:wght@700&display=swap" rel="stylesheet">
 {% endblock head %}
 
 {% block title %}中山資管全國第一影廳{% endblock title%}
 
 {% block content%}
-<div class="position-absolute top-50 start-50 translate-middle">
-    <img class="index_pic" src="{{ url_for('static', filename='./img/home.png') }}">
-    <h1 class="index_title">中山資管全國第一影廳</h1>
-    <div class="btn_div">
-        <a href="{{ url_for('api.register') }}">
-            <button class="index_btn">註冊</button>
-        </a>
-        <a href="{{ url_for('api.login') }}">
-            <button class="index_btn">登入</button>
-        </a>
+<header class="cinema-curtain">
+    <div class="marquee-container">
+        <p class="marquee-text">⚡ 鏈鋸人：蕾潔篇現正熱映中！ ⚡ 搶先購票🔥</p>
     </div>
-</div>
+    </header>
+
+<main class="content-body">
+    <div class="main-content-box">
+        <img class="index_pic" src="{{ url_for('static', filename='img/home.png') }}">
+        <h1 class="index_title">中山資管<p>全國第一影廳</p></h1>
+        
+        <div class="btn_div">
+            <a href="{{ url_for('api.register') }}">
+                <button class="index_btn">註冊</button>
+            </a>
+            <a href="{{ url_for('api.login') }}">
+                <button class="index_btn">登入</button>
+            </a>
+        </div>
+    </div>
+</main>
 {% endblock content%}
