@@ -144,38 +144,43 @@ class Cart:
 class Product:
     @staticmethod
     def count():
-        sql = 'SELECT COUNT(*) FROM product'
+        sql = 'SELECT COUNT(*) FROM movie'
         return DB.fetchone(sql)
 
     @staticmethod
     def get_product(pid):
         sql = 'SELECT * FROM product WHERE pid = %s'
         return DB.fetchone(sql, (pid,))
+    @staticmethod
+    def get_movie(movie_id):
+        sql = 'SELECT * FROM movie WHERE movie_id = %s'
+        return DB.fetchone(sql, (movie_id,))
+
 
     @staticmethod
     def get_all_product():
-        sql = 'SELECT * FROM product'
+        sql = 'SELECT * FROM movie'
         return DB.fetchall(sql)
 
     @staticmethod
     def get_name(pid):
-        sql = 'SELECT pname FROM product WHERE pid = %s'
+        sql = 'SELECT movie_name FROM movie WHERE pid = %s'
         return DB.fetchone(sql, (pid,))[0]
 
     @staticmethod
     def add_product(input_data):
-        sql = 'INSERT INTO product (pid, pname, price, category, pdesc) VALUES (%s, %s, %s, %s, %s)'
-        DB.execute_input(sql, (input_data['pid'], input_data['pname'], input_data['price'], input_data['category'], input_data['pdesc']))
+        sql = 'INSERT INTO movie (pid, movie_name, movie_price, category, pdesc) VALUES (%s, %s, %s, %s, %s)'
+        DB.execute_input(sql, (input_data['pid'], input_data['movie_name'], input_data['movie_price'], input_data['category'], input_data['pdesc']))
 
     @staticmethod
     def delete_product(pid):
-        sql = 'DELETE FROM product WHERE pid = %s'
+        sql = 'DELETE FROM movie WHERE pid = %s'
         DB.execute_input(sql, (pid,))
 
     @staticmethod
     def update_product(input_data):
-        sql = 'UPDATE product SET pname = %s, price = %s, category = %s, pdesc = %s WHERE pid = %s'
-        DB.execute_input(sql, (input_data['pname'], input_data['price'], input_data['category'], input_data['pdesc'], input_data['pid']))
+        sql = 'UPDATE movie SET movie_name = %s, movie_price = %s, category = %s, pdesc = %s WHERE pid = %s'
+        DB.execute_input(sql, (input_data['movie_name'], input_data['movie_price'], input_data['category'], input_data['pdesc'], input_data['pid']))
 
 
 class Record:
@@ -191,7 +196,7 @@ class Record:
 
     @staticmethod
     def get_price(pid):
-        sql = 'SELECT price FROM product WHERE pid = %s'
+        sql = 'SELECT movie_price FROM movie WHERE pid = %s'
         return DB.fetchone(sql, (pid,))[0]
 
     @staticmethod

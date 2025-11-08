@@ -36,119 +36,128 @@ def bookstore():
         search = request.values.get('keyword')
         keyword = search
         
-        cursor.execute('SELECT * FROM PRODUCT WHERE PNAME LIKE %s', ('%' + search + '%',))
-        book_row = cursor.fetchall()
-        book_data = []
+        cursor.execute('SELECT * FROM movie WHERE movie_name LIKE %s', ('%' + search + '%',))
+        movie_row = cursor.fetchall()
+        movie_data = []
         final_data = []
         
-        for i in book_row:
-            book = {
-                '商品編號': i[0],
-                '商品名稱': i[1],
-                '商品價格': i[2]
+        for i in movie_row:
+            movie = {
+                '電影編號': i[0],
+                '電影名稱': i[1],
+                '電影價格': i[7]
             }
-            book_data.append(book)
+            movie_data.append(movie)
             total = total + 1
         
-        if(len(book_data) < end):
-            end = len(book_data)
+        if(len(movie_data) < end):
+            end = len(movie_data)
             flag = 1
             
         for j in range(start, end):
-            final_data.append(book_data[j])
+            final_data.append(movie_data[j])
             
         count = math.ceil(total/9)
-        
-        return render_template('bookstore.html', single=single, keyword=search, book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)    
+
+        return render_template('bookstore.html', single=single, keyword=search, movie_data=movie_data, user=current_user.name, page=1, flag=flag, count=count)
 
     
-    elif 'pid' in request.args:
-        pid = request.args['pid']
-        data = Product.get_product(pid)
+    elif 'movie_id' in request.args:
+        movie_id = request.args['movie_id']
+        data = Product.get_movie(movie_id)
         
-        pname = data[1]
-        price = data[2]
-        category = data[3]
-        description = data[4]
-        image = 'sdg.jpg'
+        movie_name = data[1]
+        level = data[2]
+        actor = data[3]
+        length = data[4]
+        start_time = data[5]
+        end_time = data[6]
+        movie_price = data[7]
+        introduction = data[8]
         
-        product = {
-            '商品編號': pid,
-            '商品名稱': pname,
-            '單價': price,
-            '類別': category,
-            '商品敘述': description,
-            '商品圖片': image
+        
+        image = '電影名稱'
+        
+        movie = {
+            '電影編號': movie_id,
+            '電影名稱': movie_name,
+            '分級': level,
+            '單價': movie_price,
+            '演員': actor,
+            '片長': length,
+            '開始時間': start_time,
+            '結束時間': end_time,
+            '商品圖片': image,
+            '電影介紹': introduction
         }
 
-        return render_template('product.html', data = product, user=current_user.name)
+        return render_template('product.html', data = movie, user=current_user.name)
     
     elif 'page' in request.args:
         page = int(request.args['page'])
         start = (page - 1) * 9
         end = page * 9
         
-        book_row = Product.get_all_product()
-        book_data = []
+        movie_row = Product.get_all_product()
+        movie_data = []
         final_data = []
         
-        for i in book_row:
-            book = {
-                '商品編號': i[0],
-                '商品名稱': i[1],
-                '商品價格': i[2]
+        for i in movie_row:
+            movie = {
+                '電影編號': i[0],
+                '電影名稱': i[1],
+                '電影價格': i[7]
             }
-            book_data.append(book)
+            movie_data.append(movie)
             
-        if(len(book_data) < end):
-            end = len(book_data)
+        if(len(movie_data) < end):
+            end = len(movie_data)
             flag = 1
             
         for j in range(start, end):
-            final_data.append(book_data[j])
-        
-        return render_template('bookstore.html', book_data=final_data, user=current_user.name, page=page, flag=flag, count=count)    
-    
+            final_data.append(movie_data[j])
+
+        return render_template('bookstore.html', movie_data=final_data, user=current_user.name, page=page, flag=flag, count=count)
+
     elif 'keyword' in request.args:
         single = 1
         search = request.values.get('keyword')
         keyword = search
-        cursor.execute('SELECT * FROM PRODUCT WHERE PNAME LIKE %s', ('%' + search + '%',))
-        book_row = cursor.fetchall()
-        book_data = []
+        cursor.execute('SELECT * FROM movie WHERE movie_name LIKE %s', ('%' + search + '%',))
+        movie_row = cursor.fetchall()
+        movie_data = []
         total = 0
         
-        for i in book_row:
-            book = {
-                '商品編號': i[0],
-                '商品名稱': i[1],
-                '商品價格': i[2]
+        for i in movie_row:
+            movie = {
+                '電影編號': i[0],
+                '電影名稱': i[1],
+                '電影價格': i[7]
             }
-
-            book_data.append(book)
+            movie_data.append(movie)
             total = total + 1
             
-        if(len(book_data) < 9):
+        if(len(movie_data) < 9):
             flag = 1
-        
-        count = math.ceil(total/9)    
-        
-        return render_template('bookstore.html', keyword=search, single=single, book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)    
+
+        count = math.ceil(total/9)
+
+        return render_template('bookstore.html', keyword=search, single=single, movie_data=movie_data, user=current_user.name, page=1, flag=flag, count=count)
     
     else:
-        book_row = Product.get_all_product()
-        book_data = []
+        movie_row = Product.get_all_product()
+        movie_data = []
         temp = 0
-        for i in book_row:
-            book = {
-                '商品編號': i[0],
-                '商品名稱': i[1],
-                '商品價格': i[2],
+        for i in movie_row:
+            movie = {
+                '電影編號': i[0],
+                '電影名稱': i[1],
+                '電影價格': i[7]
             }
-            if len(book_data) < 9:
-                book_data.append(book)
-        
-        return render_template('bookstore.html', book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)
+            if len(movie_data) < 9:
+                movie_data.append(movie)
+
+        return render_template('bookstore.html', movie_data=movie_data, user=current_user.name, page=1, flag=flag, count=count)
 
 # 會員購物車
 @store.route('/cart', methods=['GET', 'POST'])
