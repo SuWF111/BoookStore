@@ -7,13 +7,16 @@
 
 {% block content %}
 
-{% set image_filename = data.電影名稱 ~ '.jpg' %}
-{% set temp = 'img/' + image_filename %}
-
+{% set temp_jpg = 'img/' ~ data.電影名稱 ~ '.jpg' %}
+{% set temp_jpeg = 'img/' ~ data.電影名稱 ~ '.jpeg' %}
+{% set temp_jpeg = 'img/' ~ data.電影名稱 ~ '.jpeg' %}
 <br/>
 <div class="row">
 <div class="card" style="width: 20rem;margin-left:5%">
-  <img src={{ url_for('static', filename = temp  ) }} class="card-img-top">
+  <img src="{{ url_for('static', filename=temp_jpg) }}" 
+     onerror="this.src='{{ url_for('static', filename=temp_jpeg) }}'" 
+     class="card-img-top" 
+     alt="{{ data.電影名稱 }}">
   <div class="card-body">
     <h5 class="card-title">{{ data.電影名稱 }}</h5>
     <p class="card-text"></p>
