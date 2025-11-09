@@ -182,6 +182,13 @@ class Product:
         sql = 'UPDATE movie SET movie_name = %s, movie_price = %s, category = %s, pdesc = %s WHERE pid = %s'
         DB.execute_input(sql, (input_data['movie_name'], input_data['movie_price'], input_data['category'], input_data['pdesc'], input_data['pid']))
 
+class Session:
+    @staticmethod
+    def get_movie_session(movie_id):
+        sql = 'SELECT * FROM movie_session WHERE movie_id=%s'
+        return DB.fetchall(sql, (movie_id,))
+
+    
 
 class Record:
     @staticmethod
