@@ -1,0 +1,42 @@
+{% extends "frontstage.html" %}
+{% block title %}我的訂購紀錄{% endblock title%}
+
+{% block content%}
+<div class="container mt-4">
+    <h2>我的訂購紀錄</h2>
+    <hr>
+    
+    {% if tickets %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>訂單編號</th>
+                    <th>電影名稱</th>
+                    <th>觀看時間</th>
+                    <th>訂購張數</th>
+                    <th>總金額</th>
+                    <th>訂購日期</th>
+                </tr>
+            </thead>
+            <tbody>
+                {# 遍歷從路由傳來的 tickets 列表 #}
+                {% for ticket in tickets %}
+                <tr>
+                    {# 索引對應您在步驟二的 SQL 查詢順序 #}
+                    <td>{{ ticket[0] }}</td> {# t.ticket_id #}
+                    <td>{{ ticket[2] }}</td> {# m.movie_name #}
+                    <td>{{ ticket[3].strftime('%Y-%m-%d %H:%M') }}</td> {# ms.session_time #}
+                    <td>{{ ticket[4] }}</td> {# t.quantity #}
+                    <td>NT$ {{ ticket[5] }}</td> {# t.pay #}
+                    <td>{{ ticket[1].strftime('%Y-%m-%d') }}</td> {# t.trade_time #}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-center">您目前沒有任何訂票紀錄。</p>
+    {% endif %}
+    
+    <a href="{{ url_for('bookstore.bookstore') }}" class="btn btn-outline-primary mt-3">返回電影列表</a>
+</div>
+{% endblock content%}

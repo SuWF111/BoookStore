@@ -322,3 +322,13 @@ def process_payment_no_seat():
         
         # 導回結帳頁
         return redirect(url_for('bookstore.cart', session_id=session_id))
+    
+    #為了歷史資料新增
+    
+
+@store.route('/order_history')
+@login_required
+def order_history():
+    member_id = current_user.id  # <-- 這裡會取得「當前登入者」的ID
+    my_tickets = Booking.get_tickets_by_member(member_id) # <-- 傳遞ID
+    return render_template('order_history.html', tickets=my_tickets)

@@ -369,17 +369,12 @@ class Showtime:
 class Booking:
     @staticmethod
     def create_ticket(member_id, theater_id, session_id, quantity, pay, card_num, bank_num):
-        """
-        [最終修正版]
-        欄位列表 (8個) 和 VALUES 列表 (8個) 完全對應。
-        """
-        
-        # 欄位列表 (8個)
+   
         sql = """
             INSERT INTO ticket 
             (member_id, theater_id, session_id, trade_time, pay, card_num, bank_num, quantity)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """ # ^-- VALUES 列表 (8個 %s)
+        """ 
         
         trade_time = datetime.now() 
         
@@ -397,3 +392,32 @@ class Booking:
         
         # 執行
         DB.execute_input(sql, input_data)
+        
+       
+    
+    @staticmethod
+    def get_tickets_by_member(member_id):
+        """
+        [新函式] 查詢特定會員的所有訂票紀錄。
+        """
+        # 這會 JOIN 三張表來取得電影名稱和場次時間
+        sql = """
+            SELECT 
+                t.ticket_id,
+                MAX(t.trade_time) AS trade_time,
+                MAX(m.movie_name) AS movie_name, 
+                MAX(ms.session_time) AS session_time,
+                MAX(t.quantity) AS quantity,
+                MAX(t.pay) AS pay
+            FROM 
+                ticket t
+            JOIN 
+                movie_session ms ON t.session_id = ms.session_id
+            JOIN 
+                movie m ON ms.movie_id = m.movie_id
+            WHERE 
+                t.member_id = %s 
+            GROUP BY 
+                t.ticket_id;
+        """
+        return DB.fetchall(sql, (member_id,))
