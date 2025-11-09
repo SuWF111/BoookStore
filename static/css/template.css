@@ -162,6 +162,103 @@ input {
     border-bottom: 2px solid var(--color-gold);
 }
 
+.register-form-box input[type="text"],
+.register-form-box input[type="password"] {
+    height: 40px; /* 增加高度，參考附圖按鈕高度 */
+    width: 250px; /* 增加寬度，讓輸入框更明顯 */
+    border-radius: 5px;
+    border: 1px solid var(--color-gold); 
+    background-color: #3A4750; /* 深色背景 */
+    color: white;
+    padding: 0 15px;
+    font-size: 1em; 
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.register-form-box input[type="text"]:focus,
+.register-form-box input[type="password"]:focus {
+    border-color: var(--color-gold);
+    box-shadow: 0 0 8px rgba(197, 160, 89, 0.8); /* 聚焦時發光 */
+}
+
+.register-form-box {
+    background-color: rgba(0, 0, 0, 0.4); 
+    padding: 25px 40px; 
+    border-radius: 10px;
+    border: 1px solid rgba(197, 160, 89, 0.5); 
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8); 
+    
+    max-width: 450px; 
+    text-align: center;
+    color: var(--white-text); 
+    
+    /* 關鍵修正：強制移除內部滾動 */
+    overflow: hidden; 
+    
+    /* 關鍵修正：計算實際可用高度，並讓表單框適應它 */
+    /* 100vh - (橫幅 85px) - (login-container 上下 padding 40px) */
+    max-height: calc(100vh - 125px); 
+}
+
+/* 2. 確保多欄位佈局下，文字和輸入框對齊 */
+.register-form-box .form-group {
+    margin-bottom: 10px; /* **縮小間距** (從 25px 減少) */
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em; 
+    font-weight: bold;
+    color: var(--color-gold); 
+}
+
+.register-form-box .form-group label {
+    margin-right: 15px; 
+    white-space: nowrap; 
+    min-width: 60px; /* 設定最小寬度，以對齊所有欄位 */
+    text-align: right;
+}
+
+/* 3. 調整身份選擇框 (Select) 的尊貴樣式 */
+.register-select {
+    height: 40px;
+    width: 150px;
+    padding: 0 10px;
+    border-radius: 5px;
+    border: 1px solid var(--color-gold); 
+    background-color: #3A4750; 
+    color: var(--white-text); 
+    font-size: 1em;
+    cursor: pointer;
+}
+
+/* 調整身份選擇容器，確保在長表單中居中 */
+.identity-select-group {
+    margin-top: 10px; /* 縮小間距 */
+    margin-bottom: 10px; /* 縮小間距 */
+    /* 讓選擇提示文字和 select 框在同一行 */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: var(--color-gold);
+}
+
+.identity-select-group label {
+    min-width: auto; /* 移除最小寬度限制 */
+    margin-right: 10px;
+    text-align: left;
+}
+
+/* 調整按鈕容器，確保與表單底部對齊 */
+.register-form-box .form-buttons {
+    margin-top: 15px; /* 保持合理間距 */
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+
 .register_btn {
     background-color: var(--color-gold);
     color: var(--color-dark-bg);
@@ -177,11 +274,13 @@ input {
 /* ---------------------------------------------------- */
 /* 請刪除或修改原始 CSS 中與新設計衝突的樣式 (如 .outer_div, body 的線性漸變等) */
 /* ---------------------------------------------------- */
-.icon{
-    height: 100px;
-    margin:auto;
-    display:block;
-    opacity: 0.7;
+.icon {
+    height: 60px; /* 略微縮小圖標 */
+    margin-bottom: 15px; /* 縮小底部間距 (從 30px 減少) */
+    opacity: 1; 
+    border: none; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); 
+    border-radius: 5px; 
 }
 .same_accoount{
     color: red;
@@ -273,13 +372,229 @@ button{
     top: 20px;
     left: 90vw;
 }
-.outer_div{
-    background-color: #d5d1ca;
+
+/* 將原本 outer_div 的居中類別移除，讓它被 login-container 居中 */
+.outer_div {
+    background-color: var(--color-dark-bg); /* 配合主題，改為深色背景 */
+    color: var(--color-gold); /* 讓登入框內的文字變金色 */
     padding: 70px 50px;
     border-radius: 10px;
-    border: 5px solid #d4c6b1;
+    border: 5px solid var(--color-gold); /* 改為金色邊框 */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* 增加立體感 */
 }
+
 input{
     background-color: #ebebeb;
 	border-bottom: 2px solid #a29074;
+}
+.login-container {
+    width: 100%;
+    height: calc(100vh - 85px); 
+    display: flex;
+    justify-content: center;
+    /* 關鍵：使用 flex-start 避免垂直居中擠壓高度 */
+    align-items: flex-start; /* 改為從頂部開始對齊 */
+    
+    /* 新增：為內容留出一些垂直間距，讓它不會緊貼橫幅 */
+    padding-top: 20px; 
+    padding-bottom: 20px;
+    
+    z-index: 1; 
+    opacity: 0; 
+    animation: fade-in 1s forwards 2s; 
+    margin-top: 85px;
+}
+
+/* --- 紅布幕覆蓋層 --- */
+.curtain-transition-overlay {
+    position: fixed; /* 讓布幕固定在視口頂層 */
+    top: 85px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 85px);
+    z-index: 9999; /* 確保它在最上層 */
+    display: flex;
+    overflow: hidden;
+    pointer-events: none; /* 讓布幕動畫完成後不阻擋點擊事件 */
+}
+
+.curtain-panel {
+    width: 50%; /* 每個面板佔據一半寬度 */
+    height: 100%;
+    /* 應用紅布幕的顏色和漸變 */
+    background: radial-gradient(circle at center, #B22222, var(--color-curtain) 70%); 
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); /* 內部陰影模擬褶皺 */
+}
+
+/* 左側布幕從左邊拉開 */
+.curtain-left {
+    transform-origin: left;
+    animation: curtain-pull-left 1.5s ease-in-out forwards 0.2s; /* 延遲 0.5 秒開始 */
+}
+
+/* 右側布幕從右邊拉開 */
+.curtain-right {
+    transform-origin: right;
+    animation: curtain-pull-right 1.5s ease-in-out forwards 0.2s; /* 延遲 0.5 秒開始 */
+}
+
+/* --- 動畫定義 --- */
+/* 左側布幕拉開動畫：向左邊移動 100% 的寬度 */
+@keyframes curtain-pull-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+/* 右側布幕拉開動畫：向右邊移動 100% 的寬度 */
+@keyframes curtain-pull-right {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(100%); }
+}
+
+/* 登入內容淡入動畫 */
+@keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* --- 尊貴橫幅樣式 (Login 專用) --- */
+.top-cinema-banner {
+    /* 保持固定和層級，確保它在最上方 */
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* 橫幅高度 */
+    background-color: #330000; /* 深酒紅色或深黑色背景 */
+    color: var(--color-gold);
+    text-align: center;
+    line-height: 80px; 
+    z-index: 999; 
+    
+    /* 招牌邊框效果 */
+    border-bottom: 5px solid var(--color-gold); 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+}
+
+.banner-title {
+    font-family: var(--font-primary); /* 應用 Cinzel 奢華字體 */
+    font-size: 2.2em;
+    font-weight: 700;
+    margin: 0;
+    padding: 0 20px;
+    letter-spacing: 4px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8),
+                 0 0 10px var(--color-gold);
+                 
+    display: inline-block;
+    border: 2px solid var(--color-gold);
+    padding: 5px 15px;
+    border-radius: 5px;
+}
+
+.login-form-box {
+    background-color: rgba(0, 0, 0, 0.4); /* 與首頁的 main-content-box 相同或類似的半透明深色背景 */
+    padding: 40px; /* 內距與首頁保持一致 */
+    border-radius: 10px;
+    border: 1px solid rgba(197, 160, 89, 0.5); /* 邊緣微弱的金色光暈 */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8); /* 讓整個內容區塊更加突出 */
+    max-width: 400px; /* 限制寬度 */
+    text-align: center;
+    color: var(--white-text); /* 預設文字顏色為白色 */
+}
+
+/* 登入頁面標題樣式 (h1.login-title) */
+.login-title {
+    font-family: var(--font-primary);
+    font-size: 2.5em; 
+    color: var(--color-gold); 
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+/* 輸入框組樣式 */
+.form-group {
+    margin-bottom: 25px; /* 每組輸入框間距 */
+    display: flex; /* 使用 Flexbox 讓 label 和 input 在一行 */
+    justify-content: center; /* 內容居中 */
+    align-items: center;
+    font-size: 1.1em; /* 稍微大一點的字體 */
+    font-weight: bold;
+    color: var(--white-text); /* 標籤文字為白色 */
+}
+
+.form-group label {
+    margin-right: 15px; /* 標籤與輸入框的間距 */
+    white-space: nowrap; /* 確保標籤不換行 */
+}
+
+/* 輸入框樣式 */
+.login-form-box input[type="text"],
+.login-form-box input[type="password"] {
+    height: 40px; /* 增加輸入框高度 */
+    width: 220px; /* 增加輸入框寬度 */
+    border-radius: 5px;
+    border: 1px solid var(--color-gold); /* 金色邊框 */
+    background-color: #3A4750; /* 深色背景 */
+    color: var(--white-text); /* 白色文字 */
+    padding: 0 15px;
+    font-size: 1em; /* 字體大小 */
+    outline: none; /* 移除點擊時的藍色邊框 */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-form-box input[type="text"]:focus,
+.login-form-box input[type="password"]:focus {
+    border-color: var(--color-gold);
+    box-shadow: 0 0 8px rgba(197, 160, 89, 0.8); /* 聚焦時發光 */
+}
+
+/* 按鈕容器 */
+.form-buttons {
+    margin-top: 40px; /* 按鈕組頂部間距 */
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* 按鈕之間的間距 */
+}
+
+/* 登入頁面按鈕樣式 (延用首頁 .index_btn 的風格) */
+.form-btn {
+    width: 110px;
+    height: 40px;
+    font-size: 18px;
+    margin: 0; /* 移除 margin，改用 gap */
+    background-color: var(--color-button-bg);
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 2px solid var(--color-gold); /* 金色邊框 */
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s;
+}
+
+.form-btn:hover {
+    background-color: var(--color-gold);
+    color: var(--color-dark-bg);
+    box-shadow: 0 0 15px var(--color-gold),
+                0 4px 6px rgba(0, 0, 0, 0.8);
+    transform: translateY(-3px) scale(1.05);
+}
+
+/* 錯誤訊息 */
+.same_accoount {
+    color: #FF6347; /* 錯誤訊息使用醒目的番茄紅 */
+    font-size: 0.95em;
+    margin-top: 5px;
+}
+
+/* 調整 .icon 的樣式，讓它更融入登入框 */
+.icon {
+    height: 80px; /* 調整大小 */
+    margin-bottom: 30px; /* 增加底部間距 */
+    opacity: 1; /* 確保不透明 */
+    border: none; /* 移除可能存在的邊框 */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* 增加一點陰影 */
+    border-radius: 5px; /* 輕微圓角 */
 }

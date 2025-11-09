@@ -1,39 +1,55 @@
 {% extends "base.html" %}
 {% block head %}
 {{ super() }}
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
 {% endblock head %}
 
 {% block title %}Login Page{% endblock title%}
 
 {% block content%}
-<div class="position-absolute top-50 start-50 translate-middle outer_div ">
-    <a href="{{ url_for('index') }}"><img class="icon" src="{{ url_for('static', filename='./img/home.png') }}"></a>
-    <h1 class="register_title mb-4 mt-4">會員登入</h1>
-    <div class="form_div">
-        <form  method='post' action={{ url_for('api.login') }} >
-            <p class="mb-4">
-                帳號：<input type="text" name="account" required/>
-            </p>
-            <p class="mb-4">
-                密碼：<input type="password" name="password" required/>
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                
-                <p class="same_accoount">
-                    {% for i in messages %}
-                        {{ i }}
-                    {% endfor %}
+
+<div class="top-cinema-banner login-banner">
+    <h1 class="banner-title">中山資管全國第一影廳</h1>
+</div>
+
+<div class="curtain-transition-overlay">
+    <div class="curtain-panel curtain-left"></div>
+    <div class="curtain-panel curtain-right"></div>
+</div>
+
+<div class="login-container"> 
+    <div class="outer_div login-form-box"> {# <-- 新增 class "login-form-box" 來區分和調整樣式 #}
+        <a href="{{ url_for('index') }}"><img class="icon" src="{{ url_for('static', filename='./img/home.png') }}"></a>
+        
+        <h1 class="login-title">會員登入</h1> {# <-- 修改 h1 的 class，使用新樣式 #}
+        
+        <div class="form_div">
+            <form method='post' action={{ url_for('api.login') }} >
+                <p class="form-group"> {# <-- 新增 class "form-group" #}
+                    <label for="account">帳號：</label> {# <-- 使用 label 標籤更語義化 #}
+                    <input type="text" id="account" name="account" required/>
                 </p>
-                {% endif %}
-                {% endwith %}
-            </p>
-            <p class="mb-4">
-                <a href="{{ url_for('index') }}">
-                    <button type="button" class="register_btn">回上頁</button>
-                </a>
-                <button type="submit" class="register_btn">登入</button>
-            </p>
-        </form>
+                <p class="form-group"> {# <-- 新增 class "form-group" #}
+                    <label for="password">密碼：</label> {# <-- 使用 label 標籤更語義化 #}
+                    <input type="password" id="password" name="password" required/>
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <p class="same_accoount">
+                        {% for i in messages %}
+                            {{ i }}
+                        {% endfor %}
+                    </p>
+                    {% endif %}
+                    {% endwith %}
+                </p>
+                <p class="form-buttons"> {# <-- 新增 class "form-buttons" #}
+                    <a href="{{ url_for('index') }}">
+                        <button type="button" class="form-btn">回上頁</button> {# <-- 修改 button 的 class #}
+                    </a>
+                    <button type="submit" class="form-btn">登入</button> {# <-- 修改 button 的 class #}
+                </p>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock content%}
