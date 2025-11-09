@@ -1,0 +1,86 @@
+{% extends "frontstage.html" %}
+{% block title %}結帳確認{% endblock title%}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block content %}
+{# 索引: [0]=session_id, [1]=theater_id, [2]=session_time, [3]=movie_name, [4]=price #}
+<div class="container mt.4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4">訂單確認與付款</h2>
+
+            <form action="{{ url_for('bookstore.process_payment_no_seat') }}" method="POST">
+                
+                <input type="hidden" name="session_id" value="{{ showtime[0] }}">
+                <input type="hidden" name="theater_id" value="{{ showtime[1] }}">
+                <input type="hidden" name="price_per_seat" id="price_per_seat" value="{{ showtime[4] }}">
+
+                {# 1. 訂單摘要 #}
+                <div class="card mb-4">
+                    <div class="card-header"><h4>{{ showtime[3] }}</h4></div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>時間：</strong> {{ showtime[2].strftime('%Y-%m-%d %H:%M') }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>單價：</strong> NT$ {{ showtime[4] }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {# 2. 數量與付款資訊 #}
+                <div class="card">
+                    <div class="card-header"><h4>付款資訊</h4></div>
+                    <div class="card-body">
+                        
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label"><strong>數量</strong></label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" 
+                                   value="1" min="1" max="10" required onchange="updateTotal()">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="card_num" class="form-label">信用卡號</label>
+                            <input type="text" class="form-control" id="card_num" name="card_num" 
+                                   placeholder="XXXX-XXXX-XXXX-XXXX" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bank_num" class="form-label">銀行代碼</label>
+                            <input type="text" class="form-control" id="bank_num" name="bank_num" 
+                                   placeholder="例如: 007" required>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="text-end">
+                            <h4>總金額：NT$ <span id="total-price">{{ showtime[4] }}</span></h4>
+                            <input type="hidden" name="pay" id="total-pay-input" value="{{ showtime[4] }}">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+                            確認付款
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateTotal() {
+        const pricePerSeat = parseInt(document.getElementById('price_per_seat').value);
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const total = pricePerSeat * quantity;
+        
+        document.getElementById('total-price').textContent = total;
+        document.getElementById('total-pay-input').value = total;
+    }
+</script>
+
+{% endblock content %}

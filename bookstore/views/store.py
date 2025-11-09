@@ -11,7 +11,10 @@ from sqlalchemy import null
 from link import *
 import math
 from base64 import b64encode
-from api.sql import Member, Order_List, Product, Record, Cart,Session
+from api.sql import Member, Order_List, Product, Record, Cart,DB,Showtime,Booking
+from flask import render_template, request, url_for, redirect
+from flask_login import login_required, current_user
+
 
 store = Blueprint('bookstore', __name__, template_folder='../templates')
 
@@ -65,7 +68,7 @@ def bookstore():
     elif 'movie_id' in request.args:
         movie_id = request.args['movie_id']
         data = Product.get_movie(movie_id)
-        session_data = Session.get_movie_session(movie_id)
+        session_data = Showtime.get_movie_session(movie_id)
         movie_name = data[1]
         level = data[2]
         actor = data[3]
@@ -161,77 +164,23 @@ def bookstore():
         return render_template('bookstore.html', movie_data=movie_data, user=current_user.name, page=1, flag=flag, count=count)
 
 # 會員購物車
-@store.route('/cart', methods=['GET', 'POST'])
-@login_required # 使用者登入後才可以看
+@store.route('/cart')
+@login_required
 def cart():
-    # 以防管理者誤闖
-    if request.method == 'GET':
-        if (current_user.role == 'manager'):
-            flash('No permission')
-            return redirect(url_for('manager.home'))
+    session_id = request.args.get('session_id') 
 
-    # 回傳有 pid 代表要 加商品
-    if request.method == 'POST':
-        if "pid" in request.form:
-            data = Cart.get_cart(current_user.id)
+    if not session_id:
+        return redirect(url_for('bookstore.bookstore'))
 
-            if data is None:  # 假如購物車裡面沒有他的資料
-                time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                Cart.add_cart(current_user.id, time)  # 幫他加一台購物車
-                data = Cart.get_cart(current_user.id)
+    showtime_details = Showtime.get_details_for_checkout(session_id)
+    
+    if not showtime_details:
+        return redirect(url_for('bookstore.bookstore'))
 
-            tno = data[2]  # 取得交易編號
-            pid = request.form.get('pid')  # 使用者想要購買的東西，使用 `request.form.get()` 來避免 KeyError
-            if not pid:
-                flash('Product ID is missing.')
-                return redirect(url_for('bookstore.cart'))  # 返回購物車頁面並顯示錯誤信息
-
-            # 檢查購物車裡面有沒有商品
-            product = Record.check_product(pid, tno)
-            # 取得商品價錢
-            price = Product.get_product(pid)[2]
-
-            # 如果購物車裡面沒有的話，把它加一個進去
-            if product is None:
-                Record.add_product({'pid': pid, 'tno': tno, 'saleprice': price, 'total': price})
-            else:
-                # 如果購物車裡面有的話，就多加一個進去
-                amount = Record.get_amount(tno, pid)
-                total = (amount + 1) * int(price)
-                Record.update_product({'amount': amount + 1, 'tno': tno, 'pid': pid, 'total': total})
-
-        elif "delete" in request.form:
-            pid = request.form.get('delete')
-            tno = Cart.get_cart(current_user.id)[2]
-
-            Member.delete_product(tno, pid)
-            product_data = only_cart()
-
-        elif "user_edit" in request.form:
-            change_order()
-            return redirect(url_for('bookstore.bookstore'))
-
-        elif "buy" in request.form:
-            change_order()
-            return redirect(url_for('bookstore.order'))
-
-        elif "order" in request.form:
-            tno = Cart.get_cart(current_user.id)[2]
-            total = Record.get_total_money(tno)
-            Cart.clear_cart(current_user.id)
-
-            time = str(datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
-            format = 'yyyy/mm/dd hh24:mi:ss'
-            Order_List.add_order({'mid': current_user.id, 'ordertime': time, 'total': total, 'format': format, 'tno': tno})
-
-            return render_template('complete.html', user=current_user.name)
-
-    product_data = only_cart()
-
-    if product_data == 0:
-        return render_template('empty.html', user=current_user.name)
-    else:
-        return render_template('cart.html', data=product_data, user=current_user.name)
+    return render_template(
+        'checkout.html',
+        showtime=showtime_details
+    )
 
 
 @store.route('/order')
@@ -336,3 +285,40 @@ def only_cart():
         product_data.append(product)
 
     return product_data
+
+
+@store.route('/process_payment_no_seat', methods=['POST'])
+@login_required
+def process_payment_no_seat():
+    # 1. 從 "結帳頁" 的表單接收所有資料
+    session_id = request.form.get('session_id')
+    theater_id = request.form.get('theater_id')
+    quantity_str = request.form.get('quantity')
+    pay_total_str = request.form.get('pay') # 這是總金額 (字串)
+    card_num = request.form.get('card_num')
+    bank_num_str = request.form.get('bank_num')
+
+    # 2. 獲取登入者 ID
+    member_id = current_user.id 
+
+    try:
+        # 3. 呼叫 SQL 函式 (步驟一)，將「一筆」交易寫入資料庫
+        Booking.create_ticket(
+            member_id=member_id,
+            theater_id=int(theater_id),
+            session_id=int(session_id),
+            quantity=int(quantity_str),       # [修正] 欄位為 bigint
+            pay=int(float(pay_total_str)),    # [修正] 欄位為 bigint
+            card_num=card_num,
+            bank_num=int(bank_num_str)        # 欄位為 bigint
+        )
+        
+        # 4. 成功：導入回主頁 (電影列表)
+        return redirect(url_for('bookstore.bookstore'))
+
+    except Exception as e:
+        # 5. 失敗：在伺服器後台印出錯誤
+        print(f"訂票失敗，錯誤: {e}") 
+        
+        # 導回結帳頁
+        return redirect(url_for('bookstore.cart', session_id=session_id))

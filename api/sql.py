@@ -3,6 +3,7 @@ from typing import Optional
 import psycopg2
 from psycopg2 import pool
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 USER = os.getenv('DB_USER')
@@ -197,7 +198,7 @@ class Product:
         sql = 'UPDATE movie SET movie_name = %s, movie_price = %s, category = %s, pdesc = %s WHERE pid = %s'
         DB.execute_input(sql, (input_data['movie_name'], input_data['movie_price'], input_data['category'], input_data['pdesc'], input_data['pid']))
 
-class Session:
+class Showtime:
     @staticmethod
     def get_movie_session(movie_id):
         sql = 'SELECT * FROM movie_session WHERE movie_id=%s'
@@ -316,3 +317,83 @@ class Analysis:
         GROUP BY member.mid, member.lname, member.fname 
         ORDER BY COUNT(*) DESC"""
         return DB.fetchall(sql, ('user',))
+
+
+#京緯新增
+class Showtime:
+    @staticmethod
+    def get_details_for_checkout(session_id):
+        """
+        [已更新] 使用 session_id 查詢結帳所需的資訊。
+        """
+        sql = """
+            SELECT 
+                ms.session_id, 
+                ms.theater_id,
+                ms.session_time,
+                m.movie_name,
+                m.movie_price
+            FROM 
+                movie_session ms
+            JOIN 
+                movie m ON ms.movie_id = m.movie_id
+            WHERE 
+                ms.session_id = %s;
+        """
+        return DB.fetchone(sql, (session_id,))
+    
+    @staticmethod
+    def get_movie_session(movie_id):
+        """
+        [新函式] 使用 movie_id 查詢所有相關場次
+        """
+        # 查詢所有「尚未播放」的場次，並依時間排序
+        sql = """
+            SELECT 
+                ms.session_id, 
+                ms.theater_id,
+                ms.movie_id,
+                ms.session_time
+            FROM 
+                movie_session ms
+            WHERE 
+                ms.movie_id = %s 
+                AND ms.session_time > NOW()  -- 只顯示未來的場次
+            ORDER BY 
+                ms.session_time;
+        """
+        # fetchall() 因為會有多個場次
+        return DB.fetchall(sql, (movie_id,))
+
+
+class Booking:
+    @staticmethod
+    def create_ticket(member_id, theater_id, session_id, quantity, pay, card_num, bank_num):
+        """
+        [最終修正版]
+        欄位列表 (8個) 和 VALUES 列表 (8個) 完全對應。
+        """
+        
+        # 欄位列表 (8個)
+        sql = """
+            INSERT INTO ticket 
+            (member_id, theater_id, session_id, trade_time, pay, card_num, bank_num, quantity)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """ # ^-- VALUES 列表 (8個 %s)
+        
+        trade_time = datetime.now() 
+        
+        # 資料 tuple (8個)
+        input_data = (
+            member_id,    # 1
+            theater_id,   # 2
+            session_id,   # 3
+            trade_time,   # 4
+            pay,          # 5 (bigint)
+            card_num,     # 6
+            bank_num,     # 7
+            quantity      # 8
+        )
+        
+        # 執行
+        DB.execute_input(sql, input_data)
