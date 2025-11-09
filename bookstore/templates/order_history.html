@@ -19,10 +19,9 @@
                 </tr>
             </thead>
             <tbody>
-                {# 遍歷從路由傳來的 tickets 列表 #}
                 {% for ticket in tickets %}
                 <tr>
-                    {# 索引對應您在步驟二的 SQL 查詢順序 #}
+                    
                     <td>{{ ticket[0] }}</td> {# t.ticket_id #}
                     <td>{{ ticket[2] }}</td> {# m.movie_name #}
                     <td>{{ ticket[3].strftime('%Y-%m-%d %H:%M') }}</td> {# ms.session_time #}
