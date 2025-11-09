@@ -11,7 +11,7 @@ from sqlalchemy import null
 from link import *
 import math
 from base64 import b64encode
-from api.sql import Member, Order_List, Product, Record, Cart
+from api.sql import Member, Order_List, Product, Record, Cart,Session
 
 store = Blueprint('bookstore', __name__, template_folder='../templates')
 
@@ -65,7 +65,7 @@ def bookstore():
     elif 'movie_id' in request.args:
         movie_id = request.args['movie_id']
         data = Product.get_movie(movie_id)
-        
+        session_data = Session.get_movie_session(movie_id)
         movie_name = data[1]
         level = data[2]
         actor = data[3]
@@ -90,8 +90,9 @@ def bookstore():
             '商品圖片': image,
             '電影介紹': introduction
         }
-
-        return render_template('product.html', data = movie, user=current_user.name)
+        
+        
+        return render_template('product.html', data = movie, session_data = session_data, user=current_user.name)
     
     elif 'page' in request.args:
         page = int(request.args['page'])

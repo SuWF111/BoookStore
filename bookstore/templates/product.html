@@ -3,48 +3,96 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}BookStore{% endblock title%}
+{% block title %}電影商品頁 - {{ data.電影名稱 }}{% endblock title%}
 
 {% block content %}
 
 {% set temp_jpg = 'img/' ~ data.電影名稱 ~ '.jpg' %}
 {% set temp_jpeg = 'img/' ~ data.電影名稱 ~ '.jpeg' %}
-{% set temp_jpeg = 'img/' ~ data.電影名稱 ~ '.jpeg' %}
+{# {% set temp_jpeg = 'img/' ~ data.電影名稱 ~ '.jpeg' %} #}
 <br/>
 <div class="row">
-<div class="card" style="width: 20rem;margin-left:5%">
-  <img src="{{ url_for('static', filename=temp_jpg) }}" 
-     onerror="this.src='{{ url_for('static', filename=temp_jpeg) }}'" 
-     class="card-img-top" 
-     alt="{{ data.電影名稱 }}">
-  <div class="card-body">
-    <h5 class="card-title">{{ data.電影名稱 }}</h5>
-    <p class="card-text"></p>
-  </div>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item"><b>分級</b>&nbsp;&nbsp;{{ data.分級 }}</li>
-    <li class="list-group-item"><b>演員名單</b>&nbsp;&nbsp;{{ data.演員 }}</li>
-    <li class="list-group-item"><b>片長</b>&nbsp;&nbsp;{{ data.片長 }}&nbsp;<b>分鐘</b></li>
-  </ul>
-  <div class="card-body">
-    <a href="{{ url_for('bookstore.bookstore') }}" class="btn btn-outline-primary">回商品列表</a>
-  </div>
-</div>
+
+    {# 左側：電影基本資訊卡片 #}
+    <div class="card" style="width: 20rem;margin-left:5%">
+        <img src="{{ url_for('static', filename=temp_jpg) }}" 
+             onerror="this.src='{{ url_for('static', filename=temp_jpeg) }}'" 
+             class="card-img-top" 
+             alt="{{ data.電影名稱 }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ data.電影名稱 }}</h5>
+            <p class="card-text"></p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><b>分級</b>&nbsp;&nbsp;{{ data.分級 }}</li>
+            <li class="list-group-item"><b>演員名單</b>&nbsp;&nbsp;{{ data.演員 }}</li>
+            <li class="list-group-item"><b>片長</b>&nbsp;&nbsp;{{ data.片長 }}&nbsp;<b>分鐘</b></li>
+            <li class="list-group-item"><b>票價</b>&nbsp;&nbsp;NT$&nbsp;{{ data.單價 }}</li>
+        </ul>
+        <div class="card-body">
+            <a href="{{ url_for('bookstore.bookstore') }}" class="btn btn-outline-primary">回電影列表</a>
+        </div>
+    </div>
 
 
-<div class="col-sm-6">
-  <form method="post" action={{ url_for('bookstore.cart') }}>
-<div class="card" style="margin-top:10%">
-  <h5 class="card-header">電影介紹</h5>
-  <div class="card-body">
-    <p class="card-text">
-      {{data.電影介紹}}
-    </p>
-    <button class="btn btn-outline-success" type="submit" value="{{data.電影編號}}" name="movie_id">前往訂票</button>
-  </div>
+    
+    <div class="col-sm-6">
+        <form method="post" action="{{ url_for('bookstore.cart') }}">
+            
+            {# 電影介紹卡片 #}
+            <div class="card" style="margin-top:10%">
+                <h5 class="card-header">電影介紹</h5>
+                <div class="card-body">
+                    <p class="card-text">
+                        {{data.電影介紹}}
+                    </p>
+                    
+                </div>
+            </div>
+
+           <div class="card" style="margin-top:10%">
+
+    <h5 class="card-header">場次資訊</h5>
+    <div class="card-body">
+        
+        {% if session_data %}
+        <ul class="list-group list-group-flush">
+            {# 遍歷 session_data #}
+            {% for session in session_data %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    
+                    
+                    <span class="text-secondary me-3">
+                        {# loop.index 從 1 開始計數 #}
+                        {% if loop.index == 1 %}
+                            [台北全國第一影廳]
+                        {% elif loop.index == 2 %}
+                            [高雄全國第一影廳]
+                        {% endif %}
+                    </span>
+                    
+                    <span class="badge bg-primary rounded-pill" style="font-size: 1.1em;">
+                        {# 顯示 月/日 時:分 #}
+                        {{ session[3].month }}/{{ session[3].day }}
+                        {{ '%02d' | format(session[3].hour) }}:{{ '%02d' | format(session[3].minute) }}
+                    </span>
+                    
+                    {# 訂票按鈕，使用 session 編號 (索引 [0]) #}
+                    <a href="{{ url_for('bookstore.cart') }}?session_id={{ session[0] }}" 
+                       class="btn btn-sm btn-outline-success">
+                        立即訂票 (NT${{ data.單價 }})
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p class="card-text text-danger">目前此電影沒有任何場次可供預訂。</p>
+        {% endif %}
+        
+    </div>
 </div>
-</form>
-</div>
+        </form>
+    </div>
 
 
 </div>
