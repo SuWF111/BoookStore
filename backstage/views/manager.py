@@ -54,7 +54,7 @@ def book():
             '商品編號': i[0],
             '商品名稱': i[1],
             '商品售價': i[2],
-            '商品類別': i[3]
+            '商品類別': i[7]
         }
         book_data.append(book)
     return book_data
@@ -62,40 +62,43 @@ def book():
 @manager.route('/add', methods=['GET', 'POST'])
 def add():
     if request.method == 'POST':
+
+        # 產生唯一 pid
         data = ""
-        while(data != None):
-            number = str(random.randrange( 10000, 99999))
-            en = random.choice(string.ascii_letters)
-            pid = en + number
-            data = Product.get_product(pid)
+        while data is not None:
+            number = str(random.randrange(10000, 99999))
+            #en = random.choice(string.ascii_letters)
+            #movie_id = en + number
+            movie_id = number
+            data = Product.get_product(movie_id)
 
-        pname = request.values.get('pname')
-        price = request.values.get('price')
-        category = request.values.get('category')
-        pdesc = request.values.get('description')
+        # 取得前端表單資料
+        movie_name = request.values.get('m_name')
+        rating = request.values.get('rating')
+        actor = request.values.get('a_name')
+        length = request.values.get('m_length')
+        start_date = request.values.get('S_date')
+        end_date = request.values.get('E_date')
+        price = request.values.get('m_price')
+        intro = request.values.get('m_intro')
 
-        # 檢查是否正確獲取到所有欄位的數據
-        if pname is None or price is None or category is None or pdesc is None:
+        # 必填欄位檢查
+        if not all([movie_name, rating, actor, length, start_date, end_date, price, intro]):
             flash('所有欄位都是必填的，請確認輸入內容。')
             return redirect(url_for('manager.productManager'))
 
-        # 檢查欄位的長度
-        if len(pname) < 1 or len(price) < 1:
-            flash('商品名稱或價格不可為空。')
-            return redirect(url_for('manager.productManager'))
-
-
-        if (len(pname) < 1 or len(price) < 1):
-            return redirect(url_for('manager.productManager'))
-        
-        Product.add_product(
-            {'pid' : pid,
-             'pname' : pname,
-             'price' : price,
-             'category' : category,
-             'pdesc':pdesc
-            }
-        )
+        # 送進資料庫
+        Product.add_product({
+            'movie_id': movie_id,
+            'movie_name': movie_name,
+            'level': rating,
+            'actor': actor,
+            'length': length,
+            'start_time': start_date,
+            'end_time': end_date,
+            'movie_price': price,
+            'introduction': intro
+        })
 
         return redirect(url_for('manager.productManager'))
 
@@ -112,7 +115,7 @@ def edit():
     if request.method == 'POST':
         Product.update_product(
             {
-            'pname' : request.values.get('pname'),
+            'movie_name' : request.values.get('movie_name'),
             'price' : request.values.get('price'),
             'category' : request.values.get('category'), 
             'pdesc' : request.values.get('description'),

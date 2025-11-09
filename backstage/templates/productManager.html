@@ -69,24 +69,42 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="inputProductName" class="form-label">商品名稱</label>
-                        <input type="text" class="form-control" id="inputProductName" name="pname" required>
+                        <input type="text" class="form-control" id="inputMovieName" name="m_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="inputUnitPrice" class="form-label">商品單價</label>
-                        <input type="number" class="form-control" id="inputUnitPrice" name="price" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="inputProductCategory" class="form-label">商品種類</label>
-                        <select id="inputProductCategory" class="form-select" name="category" required>
-                            <option selected disabled value="">請選擇類型</option>
-                            <option value="BOOK">BOOK</option>
-                            <option value="CD">CD</option>
-                            <option value="DVD">DVD</option>
+                        <label for="selectRating" class="form-label">分級</label>
+                        <select class="form-select" id="selectRating" name="rating" required>
+                            <option value="" selected disabled>請選擇分級</option>
+                            <option value="普遍級">普遍級</option>
+                            <option value="保護級">保護級</option>
+                            <option value="輔12級">輔12級</option>
+                            <option value="輔15級">輔15級</option>
+                            <option value="限制級">限制級</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="inputProductDesc" class="form-label">商品敘述</label>
-                        <textarea class="form-control" id="inputProductDesc" name="description" required></textarea>
+                        <label for="inputProductName" class="form-label">演員名單</label>
+                        <input type="text" class="form-control" id="inputActorName" name="a_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputUnitPrice" class="form-label">片長（分鐘）</label>
+                        <input type="number" class="form-control" id="inputMovieLength" name="m_length" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputProductDate" class="form-label">上片日期</label>
+                        <input type="date" class="form-control" id="inputStartDate" name="S_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputProductDate" class="form-label">下片日期</label>
+                        <input type="date" class="form-control" id="inputEndDate" name="E_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputUnitPrice" class="form-label">價錢</label>
+                        <input type="number" class="form-control" id="inputMoviePrice" name="m_price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputProductDesc" class="form-label">電影敘述</label>
+                        <textarea class="form-control" id="inputMovieIntro" name="m_intro" required></textarea>
                     </div>
                     <!-- <div class="mb-3">
                         <label for="inputProductImg" class="form-label">商品圖片</label><br/>
@@ -110,10 +128,10 @@
 <table id="manager" class="table table-bordered">
     <thead>
         <tr>
-            <th width="10%"><center>商品編號</center></th>
-            <th width="20%"><center>商品名稱</center></th>
-            <th width="15%"><center>商品單價</center></th>
-            <th width="15%"><center>商品類別</center></th>
+            <th width="10%"><center>電影編號</center></th>
+            <th width="20%"><center>電影名稱</center></th>
+            <th width="15%"><center>電影分級</center></th>
+            <th width="15%"><center>電影價錢</center></th>
             <th colspan="2"><center>資料操作</center></th>
         </tr>
     </thead>

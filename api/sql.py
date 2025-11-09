@@ -169,13 +169,28 @@ class Product:
 
     @staticmethod
     def add_product(input_data):
-        sql = 'INSERT INTO movie (pid, movie_name, movie_price, category, pdesc) VALUES (%s, %s, %s, %s, %s)'
-        DB.execute_input(sql, (input_data['pid'], input_data['movie_name'], input_data['movie_price'], input_data['category'], input_data['pdesc']))
+        sql = '''
+            INSERT INTO movie 
+            (movie_id, movie_name, level, actor, length, start_time, end_time, movie_price, introduction) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        '''
+        DB.execute_input(sql, (
+            input_data['movie_id'], 
+            input_data['movie_name'], 
+            input_data['level'], 
+            input_data['actor'], 
+            input_data['length'], 
+            input_data['start_time'], 
+            input_data['end_time'], 
+            input_data['movie_price'], 
+            input_data['introduction']   # <-- 這裡修正拼字
+        ))
+
 
     @staticmethod
-    def delete_product(pid):
-        sql = 'DELETE FROM movie WHERE pid = %s'
-        DB.execute_input(sql, (pid,))
+    def delete_product(movie_id):
+        sql = 'DELETE FROM movie WHERE movie_id = %s'
+        DB.execute_input(sql, (movie_id,))
 
     @staticmethod
     def update_product(input_data):
