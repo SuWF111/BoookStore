@@ -1,4 +1,4 @@
-{% extends "frontstage.html" %}
+{% extends "backstage.html" %}
 {% block head %}
 {{ super() }}
 {% endblock head %}
@@ -40,7 +40,7 @@
             <li class="list-group-item"><b>票價</b>&nbsp;&nbsp;NT$&nbsp;{{ data.單價 }}</li>
         </ul>
         <div class="card-body">
-            <a href="{{ url_for('bookstore.bookstore') }}" class="btn btn-outline-primary">回電影列表</a>
+            <a href="{{ url_for('manager.productManager') }}" class="btn btn-outline-primary">回電影列表</a>
         </div>
     </div>
 
