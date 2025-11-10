@@ -229,23 +229,20 @@ def orderManager():
     if request.method == 'POST':
         pass
     else:
-        order_row = Order_List.get_order()
+        order_row = Order_List.get_ticket()
         order_data = []
         for i in order_row:
-            full_name = ""
-            if not i[1]: 
-                full_name = i[2]  # 如果姓是空的，直接使用名字(這時是全名)
-            else:
-                full_name = f"{i[1]}{i[2]}" # 否則，正常組合
             order = {
                 '訂單編號': i[0],
-                '訂購人': full_name,
-                '訂單總價': i[3],
-                '訂單時間': i[4]
+                '訂購人': i[1],
+                '訂單總價': i[2],
+                '訂單時間': i[3]
             }
             order_data.append(order)
-            
-        orderdetail_row = Order_List.get_orderdetail()
+        # print(order)
+   
+        orderdetail_row = Order_List.get_ticketdetail()
+        
         order_detail = []
 
         for j in orderdetail_row:
@@ -256,5 +253,7 @@ def orderManager():
                 '訂購數量': j[3]
             }
             order_detail.append(orderdetail)
+            
+        # print(order_detail)
 
     return render_template('orderManager.html', orderData = order_data, orderDetail = order_detail, user=current_user.name)

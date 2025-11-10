@@ -347,6 +347,30 @@ class Order_List:
         JOIN product p ON r.pid = p.pid
         '''
         return DB.fetchall(sql)
+    
+    @staticmethod
+    def get_ticket():
+        sql = '''
+        SELECT t.ticket_id, m.fname, pay, trade_time
+        FROM ticket t
+        JOIN member m ON t.member_id = m.mid
+        '''
+        return DB.fetchall(sql)
+    def get_ticketdetail():
+        sql = '''
+        SELECT 
+            t.ticket_id,
+            m.movie_name,
+            m.movie_price,
+            t.quantity
+        FROM 
+            ticket AS t
+        JOIN 
+            movie_session AS ms ON t.theater_id = ms.theater_id AND t.session_id = ms.session_id
+        JOIN 
+            movie AS m ON ms.movie_id = m.movie_id;
+        '''
+        return DB.fetchall(sql)
 
 
 class Analysis:
