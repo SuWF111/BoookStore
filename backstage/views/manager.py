@@ -38,7 +38,12 @@ def productManager():
         else:
             data = Product.get_product(pid)
             Product.delete_product(pid)
-    
+
+    if 'detail' in request.form:
+        pid = request.values.get('detail')
+        return redirect(url_for('manager.detailPage', pid=pid))
+
+
     elif 'edit' in request.values:
         pid = request.values.get('edit')
         return redirect(url_for('manager.edit', pid=pid))
@@ -115,37 +120,107 @@ def edit():
     if request.method == 'POST':
         Product.update_product(
             {
+            'pid' : request.values.get('pid'),
             'movie_name' : request.values.get('movie_name'),
-            'price' : request.values.get('price'),
-            'category' : request.values.get('category'), 
-            'pdesc' : request.values.get('description'),
-            'pid' : request.values.get('pid')
+            'level' : request.values.get('level'),
+            'actor' : request.values.get('actor'), 
+            'length' : request.values.get('length'),
+            'start_time' : request.values.get('start_time'),
+            'end_time' : request.values.get('enf_time'), 
+            'movie_price' : request.values.get('movie_price'),
+            'introduction' : request.values.get('introduction')
             }
         )
         
         return redirect(url_for('manager.productManager'))
 
     else:
-        product = show_info()
-        return render_template('edit.html', data=product)
+        movie = show_info()
+        return render_template('edit.html', data=movie)
 
+@manager.route('/detail/<pid>')
+def detailPage(pid):
+        data = Product.get_movie(pid)
+        # count = Ticket.count_ticket(pid)
+        # session_data = Session.get_movie_session(pid)
+        movie_name = data[1]
+        level = data[2]
+        actor = data[3]
+        length = data[4]
+        start_time = data[5]
+        end_time = data[6]
+        movie_price = data[7]
+        introduction = data[8]
+        
+        
+        image = '電影名稱'
+        
+        movie = {
+            '電影編號': pid,
+            '電影名稱': movie_name,
+            '分級': level,
+            '單價': movie_price,
+            '演員': actor,
+            '片長': length,
+            '開始時間': start_time,
+            '結束時間': end_time,
+            '商品圖片': image,
+            '電影介紹': introduction,
+            # '售出票數': count
+        }
+        return render_template('detail.html', data = movie, user=current_user.name)
+    # data = Product.get_movie( pid)
+    # return render_template('detail.html', data=data)
+
+@manager.route('/check_tickets', methods=['POST'])
+def check_tickets():
+    # 從表單接收資料
+    movie_id = request.form.get('movie_id')
+    theater_id = request.form.get('theater_id')
+    session_id = request.form.get('session_id')
+    
+    # 呼叫已修正的函式
+    ticket_data = Ticket.count_ticket(movie_id, theater_id, session_id)
+
+    # 處理查詢結果 (fetchone 會回傳一個元組, 像 (25,) 或 (None,))
+    sold_count = 0
+    if ticket_data and ticket_data[0] is not None:
+        sold_count = ticket_data[0]
+
+    # 建立一個快閃訊息來顯示結果
+    # (您可能需要一個函式來把 theater_id 換成中文名稱，但我們先用 ID)
+    flash(f"查詢結果：影城 {theater_id}、場次 {session_id}，目前已售出 {sold_count} 張票。", "info") # "info" 是一個類別，用於 Bootstrap 樣式
+
+    # 【完成 return】
+    # 將使用者重新導向回他們剛剛所在的電影詳細頁面
+    return redirect(url_for('manager.detailPage', pid=movie_id))
 
 def show_info():
-    pid = request.args['pid']
-    data = Product.get_product(pid)
-    pname = data[1]
-    price = data[2]
-    category = data[3]
-    description = data[4]
+    movie_id = request.args['pid']
+    data = Product.get_movie(movie_id)
+    movie_name = data[1]
+    level = data[2]
+    actor = data[3]
+    length = data[4]
+    start_time = data[5]
+    end_time = data[6]
+    movie_price = data[7]
+    introduction = data[8]
 
-    product = {
-        '商品編號': pid,
-        '商品名稱': pname,
-        '單價': price,
-        '類別': category,
-        '商品敘述': description
+    movie = {
+        '電影編號': movie_id,
+        '電影名稱': movie_name,
+        '分級': level,
+        '單價': movie_price,
+        '演員': actor,
+        '片長': length,
+        '開始時間': start_time,
+        '結束時間': end_time,
+        # '商品圖片': image,
+        '電影介紹': introduction,
+        # '售出票數': count
     }
-    return product
+    return movie
 
 
 @manager.route('/orderManager', methods=['GET', 'POST'])

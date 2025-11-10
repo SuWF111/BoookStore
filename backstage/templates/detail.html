@@ -1,0 +1,94 @@
+{% extends "frontstage.html" %}
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}電影商品頁 - {{ data.電影名稱 }}{% endblock title%}
+
+{% block content %}
+
+{% set temp_jpg = 'img/' ~ data.電影名稱 ~ '.jpg' %}
+{% set temp_jpeg = 'img/' ~ data.電影名稱 ~ '.jpeg' %}
+{# {% set temp_jpeg = 'img/' ~ data.電影名稱 ~ '.jpeg' %} #}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<br/>
+<div class="row">
+
+    {# 左側：電影基本資訊卡片 #}
+    <div class="card" style="width: 20rem;margin-left:5%">
+        <img src="{{ url_for('static', filename=temp_jpg) }}" 
+            onerror="this.src='{{ url_for('static', filename=temp_jpeg) }}'" 
+            class="card-img-top" 
+        alt="{{ data.電影名稱 }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ data.電影名稱 }}</h5>
+            <p class="card-text"></p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><b>分級</b>&nbsp;&nbsp;{{ data.分級 }}</li>
+            <li class="list-group-item"><b>演員名單</b>&nbsp;&nbsp;{{ data.演員 }}</li>
+            <li class="list-group-item"><b>片長</b>&nbsp;&nbsp;{{ data.片長 }}&nbsp;<b>分鐘</b></li>
+            <li class="list-group-item"><b>票價</b>&nbsp;&nbsp;NT$&nbsp;{{ data.單價 }}</li>
+        </ul>
+        <div class="card-body">
+            <a href="{{ url_for('bookstore.bookstore') }}" class="btn btn-outline-primary">回電影列表</a>
+        </div>
+    </div>
+
+
+    
+    <div class="col-sm-6">
+        {# 電影介紹卡片 #}
+        <div class="card" style="margin-top:10%">
+            <h5 class="card-header">電影介紹</h5>
+            <div class="card-body">
+                <p class="card-text">
+                    {{data.電影介紹}}
+                </p>
+            </div>
+        </div>
+        <div class="card" style="margin-top:10%">
+            <h5 class="card-header">查詢場次已售票數</h5>
+            
+            <div class="card-body">
+                
+                <form method="POST" action="{{ url_for('manager.check_tickets') }}">
+                    
+                    <input type="hidden" name="movie_id" value="{{ data.電影編號 }}">
+                    
+                    <div class="mb-3">
+                        <label for="theater_id" class="form-label">選擇影城</label>
+                        <select class="form-select" id="theater_id" name="theater_id" required>
+                            <option value="" disabled selected>請選擇影城</option>
+                            <option value="1">台北</option>
+                            <option value="2">高雄</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="session_id" class="form-label">選擇場次</label>
+                        <select class="form-select" id="session_id" name="session_id" required>
+                            <option value="" disabled selected>請選擇場次</option>
+                            {% for i in range(1, 13) %}
+                            <option value="{{ i }}">場次 {{ i }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">查詢</button>
+                
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div> {% endblock content%}

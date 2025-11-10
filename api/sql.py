@@ -149,15 +149,15 @@ class Product:
         return DB.fetchone(sql)
 
     @staticmethod
-    def get_product(pid):
-        sql = 'SELECT * FROM product WHERE pid = %s'
-        return DB.fetchone(sql, (pid,))
+    def get_product(movie_id):
+        sql = 'SELECT * FROM movie WHERE movie_id = %s'
+        return DB.fetchone(sql, (movie_id,))
+    
     @staticmethod
     def get_movie(movie_id):
         sql = 'SELECT * FROM movie WHERE movie_id = %s'
         return DB.fetchone(sql, (movie_id,))
-
-
+    
     @staticmethod
     def get_all_product():
         sql = 'SELECT * FROM movie'
@@ -184,7 +184,7 @@ class Product:
             input_data['start_time'], 
             input_data['end_time'], 
             input_data['movie_price'], 
-            input_data['introduction']   # <-- 這裡修正拼字
+            input_data['introduction']
         ))
 
 
@@ -195,8 +195,32 @@ class Product:
 
     @staticmethod
     def update_product(input_data):
-        sql = 'UPDATE movie SET movie_name = %s, movie_price = %s, category = %s, pdesc = %s WHERE pid = %s'
-        DB.execute_input(sql, (input_data['movie_name'], input_data['movie_price'], input_data['category'], input_data['pdesc'], input_data['pid']))
+        sql = '''
+            UPDATE movie 
+            SET 
+                movie_name = %s, 
+                level = %s, 
+                actor = %s, 
+                length = %s, 
+                start_time = %s, 
+                end_time = %s, 
+                movie_price = %s, 
+                introduction = %s 
+            WHERE 
+                movie_id = %s
+        '''        
+        # print(input_data[0])
+        DB.execute_input(sql, (
+            input_data['movie_name'], 
+            input_data['level'], 
+            input_data['actor'], 
+            input_data['length'], 
+            input_data['start_time'], 
+            input_data['end_time'], 
+            input_data['movie_price'], 
+            input_data['introduction'],
+            input_data['pid']
+            ))
 
 class Showtime:
     @staticmethod
@@ -204,8 +228,34 @@ class Showtime:
         sql = 'SELECT * FROM movie_session WHERE movie_id=%s'
         return DB.fetchall(sql, (movie_id,))
 
+class Ticket:
+    @staticmethod
+    def get_ticket(movie_id):
+        sql =  '''
+            SELECT t.*
+            FROM ticket AS t
+            JOIN movie_session AS ms
+                ON ms.theater_id = t.theater_id
+                AND ms.session_id = t.session_id
+            WHERE ms.movie_id = %s;
+            '''
+        return DB.fetchall(sql, (movie_id,))
     
-
+    @staticmethod
+    def count_ticket(movie_id, theater_id, session_id): # <-- 1. 接收所有三個參數
+        sql =  '''
+                SELECT SUM(t.quantity)
+                FROM ticket AS t
+                JOIN movie_session AS ms
+                    ON ms.theater_id = t.theater_id
+                    AND ms.session_id = t.session_id
+                WHERE ms.movie_id = %s
+                    AND ms.theater_id = %s
+                    AND ms.session_id = %s;
+                '''
+        # <-- 2. 將所有三個參數按順序傳入 SQL 查詢
+        return DB.fetchone(sql, (movie_id, theater_id, session_id))
+    
 class Record:
     @staticmethod
     def get_total_money(tno):

@@ -4,71 +4,69 @@
 
 {% endblock head %}
 
-{% block title %}BookStore{% endblock title%}
+{% block title %}編輯電影 - {{ data.電影名稱 }}{% endblock title%}
 
 {% block content%}
-
 
 <br/>
 <div class="container-xl">
   <br/>
-  <form method="post" enctype=multipart/form-data action={{ url_for('manager.edit') }}>
+  <form method="post" enctype="multipart/form-data" action={{ url_for('manager.edit') }}>
     <table class="table table-bordered">
       <tr>
-        <th>商品編號</th>
-        <td><input class="form-control" type="text" value="{{ data.商品編號 }}" name="pid" readonly class="id_input"></td>
+        <th>電影編號</th>
+        <td><input class="form-control" type="text" value="{{ data.電影編號 }}" name="pid" readonly></td>
       </tr>
       <tr>
-        <th>商品名稱</th>
-        <td><input class="form-control" type="text" value="{{ data.商品名稱 }}" name="pname" required></td>
+        <th>電影名稱</th>
+        <td><input class="form-control" type="text" value="{{ data.電影名稱 }}" name="movie_name" required></td>
       </tr>
       <tr>
-        <th>單價</th>
-        <td><input class="form-control" type="text" value="{{ data.單價 }}" name="price" required></td>
-      </tr>
-      <tr>
-        <th>類別</th>
+        <th>分級</th>
         <td>
-          <select class="form-control" name="category">
-            {% if data.類別 == 'CD' %}
-              <option value="BOOK">BOOK</option>
-              <option value="DVD">DVD</option>
-              <option value="CD" selected>CD</option>
-            {% elif data.類別 == 'DVD' %}
-              <option value="BOOK">BOOK</option>
-              <option value="DVD" selected>DVD</option>
-              <option value="CD">CD</option>
-            {% else %}
-              <option value="BOOK" selected>BOOK</option>
-              <option value="DVD">DVD</option>
-              <option value="CD">CD</option>
-            {% endif %}
-            
-        </select>
-      </tr>
-      <tr>
-        <th>商品敘述</th>
-        <td>
-          <textarea class="form-control" name="description">{{ data.商品敘述 }}</textarea>
+          <select class="form-select" name="level" required>
+            {% set ratings = ['普遍級', '保護級', '輔12級', '輔15級', '限制級'] %}
+            {% for r in ratings %}
+              <option value="{{ r }}" {% if data.分級 == r %}selected{% endif %}>{{ r }}</option>
+            {% endfor %}
+          </select>
         </td>
       </tr>
-      <!-- <tr>
-        <th>商品圖片</th>
+      <tr>
+        <th>演員名單</th>
+        <td><input class="form-control" type="text" value="{{ data.演員 }}" name="actor" required></td>
+      </tr>
+      <tr>
+        <th>片長（分鐘）</th>
+        <td><input class="form-control" type="number" value="{{ data.片長 }}" name="length" required></td>
+      </tr>
+      <tr>
+        <th>上片日期</th>
+        <td><input class="form-control" type="date" value="{{ data.開始時間.strftime('%Y-%m-%d') }}" name="start_date" required></td>
+      </tr>
+      <tr>
+        <th>下片日期</th>
+        <td><input class="form-control" type="date" value="{{ data.結束時間.strftime('%Y-%m-%d') }}" name="end_date" required></td>
+      </tr>
+      <tr>
+        <th>價錢</th>
+        <td><input class="form-control" type="number" value="{{ data.單價 }}" name="movie_price" required></td>
+      </tr>
+      <tr>
+        <th>電影敘述</th>
         <td>
-          <input type="file" name="file" id="file-uploader" data-target="file-uploader"/>
+          <textarea class="form-control" name="introduction" required>{{ data.電影介紹 }}</textarea>
         </td>
-      </tr> -->
-    </table>
+      </tr>
+      </table>
     <center>
       <div class="option">
         <button class="btn btn-outline-success" type="submit">確定修改</button> 
-        <a href="{{ url_for('manager.productManager') }}"><button class="btn btn-outline-danger">回商品管理</button></a>
+        <a href="{{ url_for('manager.productManager') }}" class="btn btn-outline-danger">回商品管理</a>
       </div>
     </center>
 
   </form>
 </div>
-
-
 
 {% endblock content%}
