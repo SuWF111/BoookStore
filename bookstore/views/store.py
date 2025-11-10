@@ -179,7 +179,8 @@ def cart():
 
     return render_template(
         'checkout.html',
-        showtime=showtime_details
+        showtime=showtime_details,
+        user=current_user.name 
     )
 
 
@@ -207,6 +208,7 @@ def order():
     return render_template('order.html', data=product_data, total=total, user=current_user.name)
 
 @store.route('/orderlist')
+@login_required
 def orderlist():
     if "oid" in request.args :
         pass
@@ -235,9 +237,12 @@ def orderlist():
             '訂購數量': j[3]
         }
         orderdetail.append(temp)
+    
+    # 新增：查詢電影票紀錄
+    my_tickets = Booking.get_tickets_by_member(user_id) 
 
-
-    return render_template('orderlist.html', data=orderlist, detail=orderdetail, user=current_user.name)
+    # 傳遞 'tickets' 變數
+    return render_template('orderlist.html', data=orderlist, detail=orderdetail, tickets=my_tickets, user=current_user.name)
 
 def change_order():
     data = Cart.get_cart(current_user.id)
@@ -313,8 +318,8 @@ def process_payment_no_seat():
             bank_num=int(bank_num_str)        # 欄位為 bigint
         )
         
-        # 4. 成功：導入回主頁 (電影列表)
-        return redirect(url_for('bookstore.bookstore'))
+        # 4. 成功：導到付款成功頁
+        return redirect(url_for('bookstore.complete'))
 
     except Exception as e:
         # 5. 失敗：在伺服器後台印出錯誤
@@ -332,3 +337,9 @@ def order_history():
     member_id = current_user.id  # <-- 這裡會取得「當前登入者」的ID
     my_tickets = Booking.get_tickets_by_member(member_id) # <-- 傳遞ID
     return render_template('order_history.html', tickets=my_tickets)
+
+@store.route('/complete')
+@login_required
+def complete(): 
+    
+    return render_template('complete.html', user=current_user.name)
