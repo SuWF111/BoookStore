@@ -144,6 +144,25 @@ class Cart:
 
 class Product:
     @staticmethod
+    def search_movie(keyword):
+        """搜尋電影名稱"""
+        connection = DB.connect()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(
+                'SELECT * FROM movie WHERE movie_name LIKE %s', 
+                ('%' + keyword + '%',)
+            )
+            result = cursor.fetchall()
+            return result
+        except Exception as e:
+            print(f"搜尋錯誤: {e}")
+            return []
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
     def count():
         sql = 'SELECT COUNT(*) FROM movie'
         return DB.fetchone(sql)
