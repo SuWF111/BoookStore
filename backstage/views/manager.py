@@ -126,7 +126,7 @@ def edit():
             'actor' : request.values.get('actor'), 
             'length' : request.values.get('length'),
             'start_time' : request.values.get('start_time'),
-            'end_time' : request.values.get('enf_time'), 
+            'end_time' : request.values.get('end_time'), 
             'movie_price' : request.values.get('movie_price'),
             'introduction' : request.values.get('introduction')
             }
